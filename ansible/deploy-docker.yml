@@ -1,9 +1,14 @@
 ---
-- name: Install Docker on Ubuntu VM
+- name: Install Docker and Deploy Web Application
   hosts: all
   become: yes
   vars:
     ansible_ssh_user: abdullah
+    app_name: webapp
+    app_image: "{{ app_name }}:latest"
+    container_name: "{{ app_name }}_container"
+    host_port: 80
+    container_port: 80
 
   tasks:
     - name: Update apt cache
@@ -57,3 +62,32 @@
         name: abdullah
         groups: docker
         append: yes
+
+    - name: Create app directory on remote
+      file:
+        path: "/home/{{ ansible_ssh_user }}/{{ app_name }}"
+        state: directory
+        mode: '0755'
+
+    - name: Copy application files
+      copy:
+        src: "../app/"
+        dest: "/home/{{ ansible_ssh_user }}/{{ app_name }}"
+
+    - name: Build Docker image
+      docker_image:
+        name: "{{ app_image }}"
+        build:
+          path: "/home/{{ ansible_ssh_user }}/{{ app_name }}"
+        source: build
+        force_source: yes
+
+    - name: Run Docker container
+      docker_container:
+        name: "{{ container_name }}"
+        image: "{{ app_image }}"
+        state: started
+        restart_policy: always
+        published_ports:
+          - "{{ host_port }}:{{ container_port }}"
+        recreate: yes
