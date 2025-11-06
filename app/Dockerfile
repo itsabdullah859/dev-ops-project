@@ -1,12 +1,16 @@
-FROM python:3.11-slim
+# Use a lightweight Nginx base image
+FROM nginx:alpine
 
-WORKDIR /app
+# Remove the default Nginx configuration file
+RUN rm /etc/nginx/conf.d/default.conf
 
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+# Copy a simple Nginx configuration that points to the correct folder
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-COPY . .
+# Copy your application files into the Nginx content directory
+COPY . /usr/share/nginx/html
 
+# Expose port 80 (where Nginx serves content)
 EXPOSE 80
 
-CMD ["python", "app.py"]
+# Nginx starts automatically by default in the alpine image, so no CMD needed
