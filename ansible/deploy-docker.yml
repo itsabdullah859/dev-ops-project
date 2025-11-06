@@ -1,0 +1,59 @@
+---
+- name: Install Docker on Ubuntu VM
+  hosts: all
+  become: yes
+  vars:
+    ansible_ssh_user: abdullah
+
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+
+    - name: Install required packages
+      apt:
+        name:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - gnupg
+          - lsb-release
+        state: present
+
+    - name: Add Docker GPG key
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+    - name: Add Docker APT repository
+      apt_repository:
+        repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_lsb.codename }} stable
+        state: present
+
+    - name: Install Docker CE
+      apt:
+        name: docker-ce
+        state: present
+        update_cache: yes
+
+    - name: Install Docker Python module (for docker_container module)
+      apt:
+        name: python3-pip
+        state: present
+
+    - name: Install docker SDK for Python
+      pip:
+        name: docker
+
+    - name: Ensure Docker starts on boot
+      systemd:
+        name: docker
+        enabled: yes
+        state: started
+
+    - name: Add abdullah to docker group (to run without sudo)
+      user:
+        name: abdullah
+        groups: docker
+        append: yes
