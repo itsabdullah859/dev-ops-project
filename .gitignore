@@ -1,0 +1,13 @@
+# Ignore Terraform local state and provider plugins
+.terraform/
+terraform.tfstate
+terraform.tfstate.backup
+# Ignore local tfvars
+*.tfvars
+
+# Specifically ignore the large Windows azurerm provider executable
+terraform/.terraform/providers/registry.terraform.io/hashicorp/azurerm/3.117.1/windows_amd64/terraform-provider-azurerm_v3.117.1_x5.exe
+
+# Optional: ignore OS files
+/.DS_Store
+/.vscode/
