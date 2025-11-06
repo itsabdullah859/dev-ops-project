@@ -9,15 +9,36 @@
         update_cache: yes
         cache_valid_time: 3600
 
-    - name: Install required packages
+    - name: Install prerequisites
       apt:
         name: "{{ item }}"
         state: present
+        update_cache: yes
       loop:
-        - docker.io
+        - apt-transport-https
+        - ca-certificates
+        - curl
+        - software-properties-common
         - python3-pip
         - nodejs
         - npm
+
+    - name: Add Docker GPG key
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+    - name: Add Docker repository
+      apt_repository:
+        repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
+        state: present
+        update_cache: yes
+
+    - name: Install Docker CE
+      apt:
+        name: docker-ce
+        state: present
+        update_cache: yes
 
     - name: Start and enable Docker service
       service:
