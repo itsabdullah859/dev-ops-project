@@ -1,0 +1,22 @@
+az ad sp create-for-rbac --name "terraform-azure-sp" --role="Contributor" --scopes="/subscriptions/4538ef42-1d68-468f-9367-b9c401fdf1a2"
+
+
+{
+  "appId": "2e503cd6-9986-4d00-bb32-288012eeb48a",
+  "displayName": "terraform-azure-sp",
+  "password": "your-client-secret",
+  "tenant": "fcdb6596-3c69-4cd8-84bd-84452e4d718c"
+}
+
+
+cd terraform
+terraform init
+terraform plan -var-file="terraform.tfvars"
+terraform apply -var-file="terraform.tfvars"
+
+
+vm_name = "vm-webapp-dev"
+vm_public_ip = "4.211.171.88"
+
+cd ansible
+ansible-playbook -i inventory.ini deploy-docker.yml
