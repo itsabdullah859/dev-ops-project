@@ -1,15 +1,9 @@
-az ad sp create-for-rbac --name "terraform-azure-sp" --role="Contributor" --scopes="/subscriptions/4538ef42-1d68-468f-9367-b9c401fdf1a2"
 
 
-# Service Principal output will appear here
-# DO NOT commit credentials to git
-# Store these values securely and add them to terraform.tfvars
-{
-  "appId": "your-client-id",
-  "displayName": "terraform-azure-sp",
-  "password": "your-client-secret",
-  "tenant": "your-tenant-id"
-}
+
+
+
+
 
 subscription_id = "4538ef42-1d68-468f-9367-b9c401fdf1a2"
 tenant_id       = "fcdb6596-3c69-4cd8-84bd-84452e4d718c"
@@ -18,14 +12,9 @@ client_secret   = "your-client-secret"
 ssh_public_key_path = "~/.ssh/id_rsa.pub"
 
 
-cd terraform
-terraform init
-terraform plan -var-file="terraform.tfvars"
-terraform apply -var-file="terraform.tfvars"
 
 
 vm_name = "vm-webapp-dev"
 vm_public_ip = "4.211.171.88"
 
-cd ansible
-ansible-playbook -i inventory.ini deploy-docker.yml
+
